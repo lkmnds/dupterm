@@ -34,6 +34,9 @@ def main(args):
     sum_all_times = 0
     jobs_per_sec = 0
 
+
+    hashjob_st = time.time()
+
     for file in onlyfiles:
         fpth = join(infolder, file)
 
@@ -56,6 +59,10 @@ def main(args):
 
         cpu_jobs += 1
 
+    hashjob_end = time.time()
+
+    cpu_per_sec_all = cpu_jobs / (hashjob_end - hashjob_st)
+
     print()
 
     duplicates = 0
@@ -65,6 +72,8 @@ def main(args):
     iojobs_per_sec = 0
     iojobs_ttaken = 0
 
+    dup_st = time.time()
+
     for fhash in file_dict:
         listfiles = file_dict[fhash]
         worked_files += 1
@@ -72,12 +81,13 @@ def main(args):
         iojob_st = time.time()
         if len(listfiles) > 1:
             duplicates += 1
+            fpth = listfiles[0]
+
             sys.stdout.write("\r\rDUP %s out of %d files [%s]\n" % (fpth.replace(infolder, ''), len(listfiles),
                 ', '.join([v.replace(infolder, '') for v in listfiles[1:]])))
             sys.stdout.flush()
 
             if RW_ENABLED:
-                fpth = listfiles[0]
                 io_jobs += 1
                 outpath = fpth.replace(infolder, outfolder)
                 with open(outpath, 'wb') as fout:
@@ -107,6 +117,10 @@ def main(args):
 
         sys.stdout.flush()
 
+    dup_end = time.time()
+
+    io_per_sec_all = io_jobs / (dup_end - dup_st)
+
     print("""
 Summary:
     %d files
@@ -117,9 +131,13 @@ Summary:
 
     %d CPU jobs
     %d IO jobs
+
+    %.2f CPU jobs / sec
+    %.2f IO jobs / sec
     """ % (len(onlyfiles), duplicates, noduplicates, len(file_dict),
         (len(onlyfiles)-len(file_dict)),
-        cpu_jobs, io_jobs))
+        cpu_jobs, io_jobs,
+        cpu_per_sec_all, io_per_sec_all))
 
 if __name__ == '__main__':
     main(sys.argv)
