@@ -84,14 +84,18 @@ def main(args):
                         fout.write(fin.read())
 
     print("""
-    %d worked files
-    %d duplicates + noduplicates ( sanity )
-    %d duplicates(or triplicates, doesn't matter)
+Summary:
+    %d files
+    %d duplicates
     %d normal files
-    %d CPU-Bound jobs
-    %d IO-Bound jobs
-    """ % (worked_files, duplicates + noduplicates,
-        duplicates, noduplicates, cpu_jobs, io_jobs))
+    %d unique files
+    %d removed files
+
+    %d CPU jobs
+    %d IO jobs
+    """ % (len(onlyfiles), duplicates, noduplicates, len(file_dict),
+        (len(onlyfiles)-len(file_dict)),
+        cpu_jobs, io_jobs))
 
 if __name__ == '__main__':
     main(sys.argv)
