@@ -6,7 +6,8 @@ import time
 
 file_dict = {}
 
-RW_ENABLED = False
+VERSION = '0.1'
+RW_ENABLED = True
 
 # modification of http://stackoverflow.com/questions/3431825/generating-an-md5-checksum-of-a-file
 def file_hash(fname, hash_obj, bs=4096):
@@ -16,6 +17,7 @@ def file_hash(fname, hash_obj, bs=4096):
     return hash_obj.digest()
 
 def main(args):
+    print("dupterm v%s" % VERSION)
     infolder = args[1]
     outfolder = args[2]
 
