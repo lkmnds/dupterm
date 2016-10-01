@@ -58,17 +58,21 @@ def main(args):
     noduplicates = 0
     worked_files = 0
     io_jobs = 0
+    iojobs_per_sec = 0
+    iojobs_ttaken = 0
 
     for fhash in file_dict:
         listfiles = file_dict[fhash]
         worked_files += 1
 
+        iojob_st = time.time()
         if len(listfiles) > 1:
             duplicates += 1
 
             if RW_ENABLED:
                 fpth = listfiles[0]
-                print("MAINTAINING FIRST ", fpth)
+                sys.stdout.write("\r\rMAINTAINING FIRST " + fpth + '\n')
+                sys.stdout.flush()
                 io_jobs += 1
                 outpath = fpth.replace(infolder, outfolder)
                 with open(outpath, 'wb') as fout:
@@ -84,6 +88,19 @@ def main(args):
                 with open(outpath, 'wb') as fout:
                     with open(fpth, 'rb') as fin:
                         fout.write(fin.read())
+
+        iojob_end = time.time()
+        time_taken = (iojob_end - iojob_st)
+        iojobs_ttaken += time_taken
+
+        if io_jobs % 50 == 0:
+            iojobs_per_sec = io_jobs / iojobs_ttaken
+
+        sys.stdout.write('\r[%d/%d] %.2fiojobs/sec' % (
+            worked_files, len(onlyfiles), iojobs_per_sec
+        ))
+
+        sys.stdout.flush()
 
     print("""
 Summary:
