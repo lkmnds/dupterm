@@ -113,7 +113,7 @@ def main(args):
             iojobs_per_sec = io_jobs / iojobs_ttaken
 
         sys.stdout.write('\r[%d/%d] %.2fiojobs/sec' % (
-            worked_files, len(onlyfiles), iojobs_per_sec
+            worked_files, len(file_dict), iojobs_per_sec
         ))
 
         sys.stdout.flush()
