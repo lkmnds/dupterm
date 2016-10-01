@@ -72,7 +72,8 @@ def main(args):
         iojob_st = time.time()
         if len(listfiles) > 1:
             duplicates += 1
-            sys.stdout.write("\r\rMAINTAINING FIRST " + fpth + '\n')
+            sys.stdout.write("\r\rDUP %s out of %d files [%s]\n" % (fpth.replace(infolder, ''), len(listfiles),
+                ', '.join([v.replace(infolder, '') for v in listfiles[1:]])))
             sys.stdout.flush()
 
             if RW_ENABLED:
