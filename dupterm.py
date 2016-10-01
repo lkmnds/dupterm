@@ -18,6 +18,9 @@ def file_hash(fname, hash_obj, bs=4096):
 
 def main(args):
     print("dupterm v%s" % VERSION)
+    if '-n' in args:
+        RW_ENABLED = False
+
     infolder = args[1]
     outfolder = args[2]
 
