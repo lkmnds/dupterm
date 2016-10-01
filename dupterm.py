@@ -26,6 +26,7 @@ def main(args):
 
     onlyfiles = [f for f in listdir(infolder) if isfile(join(infolder, f))]
     numjobs = len(onlyfiles)
+    js_update_time = int(numjobs / 10) + 1
     cpu_jobs = 1
     print('hashing', numjobs, 'files')
 
@@ -47,7 +48,7 @@ def main(args):
 
         sum_all_times += (time_job_end - time_job_start)
 
-        if cpu_jobs % 200 == 0:
+        if cpu_jobs % js_update_time == 0:
             jobs_per_sec = cpu_jobs / sum_all_times
 
         sys.stdout.write("\r[%d/%d] %.2fcpujobs/sec" % (cpu_jobs, numjobs, jobs_per_sec))
@@ -71,11 +72,11 @@ def main(args):
         iojob_st = time.time()
         if len(listfiles) > 1:
             duplicates += 1
+            sys.stdout.write("\r\rMAINTAINING FIRST " + fpth + '\n')
+            sys.stdout.flush()
 
             if RW_ENABLED:
                 fpth = listfiles[0]
-                sys.stdout.write("\r\rMAINTAINING FIRST " + fpth + '\n')
-                sys.stdout.flush()
                 io_jobs += 1
                 outpath = fpth.replace(infolder, outfolder)
                 with open(outpath, 'wb') as fout:
