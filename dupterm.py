@@ -73,6 +73,7 @@ def main(args):
     iojobs_ttaken = 0
 
     dup_st = time.time()
+    iojobs_upd_time = int(len(file_dict) / 10) + 1
 
     for fhash in file_dict:
         listfiles = file_dict[fhash]
@@ -108,7 +109,7 @@ def main(args):
         time_taken = (iojob_end - iojob_st)
         iojobs_ttaken += time_taken
 
-        if io_jobs % 50 == 0:
+        if io_jobs % iojobs_upd_time == 0:
             iojobs_per_sec = io_jobs / iojobs_ttaken
 
         sys.stdout.write('\r[%d/%d] %.2fiojobs/sec' % (
