@@ -1,3 +1,32 @@
+'''
+    dupterm.py - terminate duplicate files
+
+    usage:
+        python3 dupterm.py infolder outfolder [flags]
+
+        no flags:
+            gets all files from infolder and outputs only unique files to outfolder
+            all original files from infolder are maintained there(unless -d is active)
+
+        -n flag enables no IOjobs:
+            just for testing and analyzing how much duplicates could you delete
+            (no action is made to infolder nor outfolder)
+
+        -d enables delete mode:
+            deletes files that are duplicate(no action is made to outfolder)
+
+    example:
+        python3 /home/user/images . -d
+            deletes all duplicate files from /home/user/images
+
+        python3 /home/user/images /home/user/result
+            moves only the unique files to /home/user/result,
+            maintains /home/user/images intact
+
+        python3 /home/user/images . -n
+            shows the summary of duplicate files that you could delete,
+            maintains /home/user/images and . intact
+'''
 from os import listdir
 from os.path import isfile, join
 import hashlib
@@ -6,8 +35,11 @@ import time
 
 file_dict = {}
 
-VERSION = '0.1'
-RW_ENABLED = True
+VERSION = '0.1.1'
+
+# globals
+RW_ENABLED = None
+FLAG_DELETE = None
 
 # modification of http://stackoverflow.com/questions/3431825/generating-an-md5-checksum-of-a-file
 def file_hash(fname, hash_obj, bs=4096):
@@ -16,10 +48,11 @@ def file_hash(fname, hash_obj, bs=4096):
             hash_obj.update(chunk)
     return hash_obj.digest()
 
+# main function
 def main(args):
     print("dupterm v%s" % VERSION)
-    if '-n' in args:
-        RW_ENABLED = False
+    RW_ENABLED = '-n' not in args
+    FLAG_DELETE = '-d' in args
 
     infolder = args[1]
     outfolder = args[2]
@@ -89,11 +122,15 @@ def main(args):
             sys.stdout.flush()
 
             if RW_ENABLED:
-                io_jobs += 1
-                outpath = fpth.replace(infolder, outfolder)
-                with open(outpath, 'wb') as fout:
-                    with open(fpth, 'rb') as fin:
-                        fout.write(fin.read())
+                if FLAG_DELETE:
+                    for other in listfiles[1:]:
+                        os.remove(other)
+                else:
+                    io_jobs += 1
+                    outpath = fpth.replace(infolder, outfolder)
+                    with open(outpath, 'wb') as fout:
+                        with open(fpth, 'rb') as fin:
+                            fout.write(fin.read())
         else:
             # get first
             noduplicates += 1
