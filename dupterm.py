@@ -29,6 +29,7 @@
 '''
 from os import listdir
 from os.path import isfile, join
+import os
 import hashlib
 import sys
 import time
@@ -134,7 +135,7 @@ def main(args):
         else:
             # get first
             noduplicates += 1
-            if RW_ENABLED:
+            if RW_ENABLED and not FLAG_DELETE:
                 fpth = listfiles[0]
                 io_jobs += 1
                 outpath = fpth.replace(infolder, outfolder)
